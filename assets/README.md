@@ -1,11 +1,13 @@
 # Assets
 
-Drop the real files here — the site references them by these exact names:
+The site references these exact filenames:
 
-- `cv.pdf` — your CV. Linked from the nav, hero "View CV" button, and footer.
-  Opens in a new tab (browsers render PDFs natively).
-- `photo.jpg` — your portrait, ideally 4:5-ish crop (e.g. 800×1000), under
-  ~300KB. Shown in the hero.
+- `Guy_Leibu_CV_Solution_Engineer_2026.pdf` — the CV. Linked from the nav,
+  hero "View CV" button, and footer. Opens in a new tab. If you replace it
+  with a differently-named file, update the three hrefs in ../index.html too
+  (or keep the same name and just overwrite).
+- `photo.jpg` — the hero portrait (real JPEG, ~63KB, 634×622; the page crops
+  it to 4:5 with object-fit: cover). Overwrite to update.
 
 To update either later: overwrite the file, then `git add -A && git commit &&
 git push` — GitHub Pages redeploys automatically in ~1 minute. No HTML changes

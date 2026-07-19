@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Guy — customer-facing solutions engineer in Tel Aviv. Demos, POCs, production fires — and a featured project: a job-search pipeline that reads career boards at the source.">
-<title>Guy — Solutions Engineer</title>
+<meta name="description" content="Guy Leibu — customer-facing solutions engineer in Tel Aviv. Demos, POCs, production fires — and a featured project: a job-search pipeline that reads career boards at the source.">
+<title>Guy Leibu — Solutions Engineer</title>
 </head>
 <body>
 <style>
@@ -248,7 +248,14 @@
     border-radius: 5px; padding: 3px 9px; cursor: pointer;
   }
   #tgReplay:hover { color: var(--tg-ink); }
-  .chat { padding: 14px 12px 18px; display: flex; flex-direction: column; gap: 8px; min-height: 430px; }
+  /* fixed phone-like height; the chat scrolls inside the screen instead of
+     stretching the phone */
+  .chat {
+    padding: 14px 12px 18px; display: flex; flex-direction: column; gap: 8px;
+    height: 470px; overflow-y: auto; scrollbar-width: none;
+    scroll-behavior: smooth;
+  }
+  .chat::-webkit-scrollbar { display: none; }
 
   .msg {
     max-width: 88%; border-radius: 14px; padding: 9px 12px 7px;
@@ -428,13 +435,12 @@
 
 <div class="wrap">
 
-  <!-- SWAP-ME: replace "Guy" with full name; set the real LinkedIn handle -->
   <header class="site">
-    <div class="who"><b>Guy</b> <span>· solutions engineering</span></div>
+    <div class="who"><b>Guy Leibu</b> <span>· solutions engineering</span></div>
     <nav>
       <a href="mailto:eitzyswitzy@gmail.com">email</a>
-      <a href="https://www.linkedin.com/in/SWAP-ME">linkedin</a>
-      <a href="assets/cv.pdf" target="_blank" rel="noopener">cv</a>
+      <a href="https://www.linkedin.com/in/guy-leibu">linkedin</a>
+      <a href="assets/Guy_Leibu_CV_Solution_Engineer_2026.pdf" target="_blank" rel="noopener">cv</a>
       <button id="themeBtn" type="button" aria-label="Toggle color theme">theme</button>
     </nav>
   </header>
@@ -451,14 +457,14 @@
       <!-- SWAP-ME: add 1–2 sentences of career facts here (years, last role/company, education) -->
       <div class="hero-ctas">
         <a class="btn hot" href="mailto:eitzyswitzy@gmail.com">Get in touch</a>
-        <a class="btn ghost" href="assets/cv.pdf" target="_blank" rel="noopener">View CV ↗</a>
+        <a class="btn ghost" href="assets/Guy_Leibu_CV_Solution_Engineer_2026.pdf" target="_blank" rel="noopener">View CV ↗</a>
         <a class="btn ghost" href="#jobfinder">Featured project ↓</a>
       </div>
     </div>
     <div class="portrait-frame">
       <!-- photo lives at assets/photo.jpg — replace that file to update the portrait -->
       <div class="portrait">
-        <img src="assets/photo.jpg" alt="Portrait of Guy">
+        <img src="assets/photo.jpg" alt="Portrait of Guy Leibu">
       </div>
       <div class="portrait-caption">// tel aviv · solutions engineering</div>
     </div>
@@ -692,9 +698,9 @@
   <!-- ================= FOOTER ================= -->
   <footer class="site">
     <div class="row">
-      <span><b style="color:var(--ink)">Guy</b> · <a href="mailto:eitzyswitzy@gmail.com">email</a>
-        · <a href="https://www.linkedin.com/in/SWAP-ME">linkedin</a>
-        · <a href="assets/cv.pdf" target="_blank" rel="noopener">cv</a></span>
+      <span><b style="color:var(--ink)">Guy Leibu</b> · <a href="mailto:eitzyswitzy@gmail.com">email</a>
+        · <a href="https://www.linkedin.com/in/guy-leibu">linkedin</a>
+        · <a href="assets/Guy_Leibu_CV_Solution_Engineer_2026.pdf" target="_blank" rel="noopener">cv</a></span>
       <span>Python · requests · Ollama · Telegram Bot API · Streamlit</span>
     </div>
     <p class="tag-line">Built July 2026, mid-job-search — the tool on this page found the interview you're prepping for.</p>
@@ -753,12 +759,21 @@
     tgClear();
     tgPlayed = true;
     msgs.forEach(function (m) { m.classList.remove("show"); });
+    chat.scrollTop = 0;
+    /* unshown messages still take up space, so never jump to scrollHeight —
+       scroll only enough to keep the newest visible bubble in view */
+    function keepInView(el) {
+      var d = el.getBoundingClientRect().bottom - chat.getBoundingClientRect().bottom;
+      if (d > -6) chat.scrollTop += d + 14;
+    }
     var t = 500;
     msgs.forEach(function (m, i) {
       var isBot = m.classList.contains("bot");
       if (isBot && i > 0) {
         (function (start) {
-          tgLater(function () { chat.insertBefore(typing, m); typing.classList.add("on"); }, start);
+          tgLater(function () {
+            chat.insertBefore(typing, m); typing.classList.add("on"); keepInView(typing);
+          }, start);
         })(t);
         t += 900;
         (function (start) {
@@ -766,7 +781,7 @@
         })(t);
       }
       (function (start) {
-        tgLater(function () { m.classList.add("show"); }, start);
+        tgLater(function () { m.classList.add("show"); keepInView(m); }, start);
       })(t);
       t += isBot ? 1400 : 1100;
     });
@@ -857,10 +872,6 @@
       });
     }, { threshold: 0.3 });
     to.observe(document.getElementById("termBox"));
-    setTimeout(function () {
-      if (!tgPlayed) msgs.forEach(function (m) { m.classList.add("show"); });
-      if (!termPlayed) renderInstant();
-    }, 3000);
   } else {
     renderInstant();
   }
